@@ -3,3 +3,5 @@ node_modules/
 .env.local
 .firebase
 .next
+firebase-debug.log
+firestore-debug.log
