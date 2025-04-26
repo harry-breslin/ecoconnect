@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import {
-  signInWithEmail,
   signInWithGoogle,
+  signInWithEmail,
+  createUserWithEmail,
   signOut,
   onAuthStateChanged,
 } from "../lib/auth";
@@ -44,7 +45,17 @@ export default function TestIntegration() {
       await signInWithEmail(email, password);
       write(`Email sign-in triggered for ${email}`);
     } catch (e) {
-      write("Email sign-in error: " + e.message);
+      if (e.code === "auth/user-not-found") {
+        // If user not found, create the account
+        try {
+          await createUserWithEmail(email, password);
+          write(`Account created and signed in for ${email}`);
+        } catch (createError) {
+          write("Account creation error: " + createError.message);
+        }
+      } else {
+        write("Email sign-in error: " + e.message);
+      }
     }
   };
 
