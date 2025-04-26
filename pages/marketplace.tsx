@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { getListings, createListing, updateListing } from "../lib/db";
 
 export default function Marketplace() {
   const [scrollY, setScrollY] = useState(0);
-  const items = [
+  const [listings, setListings] = useState([]);
+  const dummyListings = [
     {
-      id: 1,
       title: "Eco-friendly Water Bottle",
       price: "WTT: MTH2025 Textbook",
       image:
@@ -14,7 +15,6 @@ export default function Marketplace() {
       tags: ["BPA Free", "1L Capacity"],
     },
     {
-      id: 2,
       title: "Bamboo Cutlery Set",
       price: "WTT: Treat me to coffee at Wholefoods",
       image:
@@ -22,7 +22,6 @@ export default function Marketplace() {
       tags: ["Travel Set", "6 Pieces"],
     },
     {
-      id: 3,
       title: "Reusable Shopping Bags",
       price: "Free - I don't use them",
       image:
@@ -30,7 +29,6 @@ export default function Marketplace() {
       tags: ["Foldable", "3 Pack"],
     },
     {
-      id: 4,
       title: "Organic Cotton Tote",
       price: "WTT: Compost for my Apple tree!",
       image:
@@ -38,7 +36,6 @@ export default function Marketplace() {
       tags: ["Handmade", "Large"],
     },
     {
-      id: 5,
       title: "Wooden Hair Brush",
       price: "WTT: Any homemade goodies",
       image:
@@ -46,13 +43,45 @@ export default function Marketplace() {
       tags: ["Bamboo", "Anti-static"],
     },
     {
-      id: 6,
       title: "Vintage Denim Jacket",
       price: "WTT: Your dad's old clothes",
       image: "https://images.pexels.com/photos/934070/pexels-photo-934070.jpeg",
       tags: ["Size M", "Light Wash"],
     },
   ];
+
+  // Fetch listings from the backend
+  useEffect(() => {
+    const fetchListings = async () => {
+      const fetchedListings = await getListings();
+      setListings(fetchedListings);
+    };
+    fetchListings();
+  }, []);
+
+  // Add dummy listings to the backend for testing
+  useEffect(() => {
+    const addDummyListings = async () => {
+      for (const dummy of dummyListings) {
+        await createListing({
+          ...dummy,
+          ownerId: "dummyOwner", // Replace with actual user ID if needed
+        });
+      }
+    };
+    addDummyListings();
+  }, []);
+
+  // Handle completing a swap
+  const handleCompleteSwap = async (listingId) => {
+    await updateListing(listingId, {
+      status: "completed",
+      swappedWith: "dummySwapper", // Replace with actual user ID if needed
+    });
+    // Refresh listings after completing the swap
+    const updatedListings = await getListings();
+    setListings(updatedListings);
+  };
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -194,7 +223,7 @@ export default function Marketplace() {
           {/* Product Grid */}
           <section className="max-w-7xl mx-auto px-6 py-12">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {items.map((item) => (
+              {listings.map((item) => (
                 <div
                   key={item.id}
                   className="bg-white rounded-xl shadow-lg overflow-hidden border border-green-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
@@ -205,9 +234,6 @@ export default function Marketplace() {
                       alt={item.title}
                       className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                     />
-                    <div className="absolute top-4 right-4 bg-white/90 text-green-600 px-3 py-1 rounded-full text-sm font-semibold shadow-sm">
-                      Available
-                    </div>
                   </div>
                   <div className="p-6">
                     <div className="flex flex-wrap gap-2 mb-3">
@@ -227,11 +253,11 @@ export default function Marketplace() {
                       {item.price}
                     </p>
                     <div className="flex gap-3">
-                      <button className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition-colors">
-                        Message Owner
-                      </button>
-                      <button className="w-12 bg-white border border-green-200 hover:bg-green-50 text-green-600 rounded-lg flex items-center justify-center transition-colors">
-                        ♡
+                      <button
+                        onClick={() => handleCompleteSwap(item.id)}
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition-colors"
+                      >
+                        Swap
                       </button>
                     </div>
                   </div>
