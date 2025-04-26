@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { getListings, createListing, updateListing } from "../lib/db";
+import {
+  getListings,
+  createListing,
+  updateListing,
+  deleteListing,
+  updateUserPoints,
+  createUserProfile,
+} from "../lib/db";
+import { useAuth } from "../lib/AuthContext";
 
 export default function Marketplace() {
+  const { user } = useAuth(); // Access the current user
   const [scrollY, setScrollY] = useState(0);
   const [listings, setListings] = useState([]);
   const dummyListings = [
@@ -62,10 +71,16 @@ export default function Marketplace() {
   // Add dummy listings to the backend for testing
   useEffect(() => {
     const addDummyListings = async () => {
-      for (const dummy of dummyListings) {
+      for (let i = 0; i < dummyListings.length; i++) {
+        const dummyOwnerId = `dummyOwner${i}`;
+        await createUserProfile({
+          uid: dummyOwnerId,
+          displayName: `Dummy User ${i}`,
+          email: `dummy${i}@example.com`,
+        });
         await createListing({
-          ...dummy,
-          ownerId: "dummyOwner", // Replace with actual user ID if needed
+          ...dummyListings[i],
+          ownerId: dummyOwnerId,
         });
       }
     };
@@ -73,14 +88,28 @@ export default function Marketplace() {
   }, []);
 
   // Handle completing a swap
-  const handleCompleteSwap = async (listingId) => {
-    await updateListing(listingId, {
-      status: "completed",
-      swappedWith: "dummySwapper", // Replace with actual user ID if needed
-    });
-    // Refresh listings after completing the swap
-    const updatedListings = await getListings();
-    setListings(updatedListings);
+  const handleCompleteSwap = async (listingId, ownerId) => {
+    if (!user) {
+      alert("You must be logged in to complete a swap.");
+      return;
+    }
+
+    try {
+      // Mark the listing as completed
+      await updateListing(listingId, {
+        status: "completed",
+        swappedWith: user.uid, // Current user's ID
+      });
+
+      // Delete the listing after marking it as completed
+      await deleteListing(listingId);
+
+      // Refresh listings after completing the swap
+      const updatedListings = await getListings();
+      setListings(updatedListings);
+    } catch (error) {
+      console.error("Error completing swap:", error);
+    }
   };
 
   useEffect(() => {
@@ -212,7 +241,7 @@ export default function Marketplace() {
                 Browse Listings
               </Link>
               <Link
-                href="/join"
+                href="/"
                 className="border-2 border-green-600 text-green-600 hover:bg-green-50 px-6 py-3 rounded-xl text-lg font-semibold transition-all transform hover:scale-105"
               >
                 Get Started
@@ -254,7 +283,9 @@ export default function Marketplace() {
                     </p>
                     <div className="flex gap-3">
                       <button
-                        onClick={() => handleCompleteSwap(item.id)}
+                        onClick={() =>
+                          handleCompleteSwap(item.id, item.ownerId)
+                        }
                         className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition-colors"
                       >
                         Swap
