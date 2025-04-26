@@ -1,0 +1,71 @@
+/* Navigation Links */
+.navLink {
+  color: #4a5568;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.1rem;
+  transition: all 0.2s;
+  padding: 0.5rem 0;
+  border-bottom: 2px solid transparent;
+}
+
+.navLink:hover {
+  color: #328e6e;
+  border-bottom: 2px solid #328e6e;
+}
+
+/* Conversation List Items */
+.conversationItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.conversationItem:hover {
+  background-color: #f0f7f4;
+}
+
+/* Input Field */
+.inputField {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border-radius: 50px;
+  border: 1px solid #e2e8f0;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.inputField:focus {
+  border-color: #328e6e;
+  box-shadow: 0 0 0 3px rgba(50, 142, 110, 0.1);
+}
+
+/* Send Button */
+.sendButton {
+  background-color: #328e6e;
+  color: white;
+  padding: 0 1.5rem;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sendButton:hover {
+  background-color: #2a7a5e;
+}
+
+.sendButton:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
