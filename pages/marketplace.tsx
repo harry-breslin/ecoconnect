@@ -17,6 +17,7 @@ export default function Marketplace() {
   const router = useRouter(); // For programmatic navigation
   const [scrollY, setScrollY] = useState(0);
   const [listings, setListings] = useState([]);
+  const [toastMessage, setToastMessage] = useState(""); // State for toast message
   const dummyListings = [
     {
       title: "Eco-friendly Water Bottle",
@@ -116,6 +117,10 @@ export default function Marketplace() {
         swappedWith: user.uid, // Current user's ID
       });
 
+      // Show toast message and hide after 4 seconds
+      setToastMessage("+10 points!");
+      setTimeout(() => setToastMessage(""), 4000);
+
       // Delete the listing after marking it as completed
       await deleteListing(listingId);
 
@@ -179,6 +184,13 @@ export default function Marketplace() {
       </Head>
 
       <div className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-50 relative overflow-hidden">
+        {/* Toast notification for swaps */}
+        {toastMessage && (
+          <div className="fixed top-4 right-4 bg-emerald-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-transform transform animate-fade-in">
+            {toastMessage}
+          </div>
+        )}
+
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {/* Floating leaves */}
