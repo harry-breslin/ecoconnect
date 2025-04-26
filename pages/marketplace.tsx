@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import {
   getListings,
   createListing,
@@ -13,6 +14,7 @@ import { useAuth } from "../lib/AuthContext";
 
 export default function Marketplace() {
   const { user } = useAuth(); // Access the current user
+  const router = useRouter(); // For programmatic navigation
   const [scrollY, setScrollY] = useState(0);
   const [listings, setListings] = useState([]);
   const dummyListings = [
@@ -59,9 +61,19 @@ export default function Marketplace() {
     },
   ];
 
+  // Redirect to login if not logged in
+  useEffect(() => {
+    if (!user) {
+      router.push("/login");
+    }
+  }, [user, router]);
+
   // Fetch listings from the backend
   useEffect(() => {
     const fetchListings = async () => {
+      if (!user) {
+        return;
+      }
       const fetchedListings = await getListings();
       setListings(fetchedListings);
     };
@@ -71,6 +83,9 @@ export default function Marketplace() {
   // Add dummy listings to the backend for testing
   useEffect(() => {
     const addDummyListings = async () => {
+      if (!user) {
+        return;
+      }
       for (let i = 0; i < dummyListings.length; i++) {
         const dummyOwnerId = `dummyOwner${i}`;
         await createUserProfile({
@@ -117,6 +132,11 @@ export default function Marketplace() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // If the user is not logged in, show nothing (redirect will handle it)
+  if (!user) {
+    return null;
+  }
 
   return (
     <>
