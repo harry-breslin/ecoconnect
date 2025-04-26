@@ -96,6 +96,17 @@ export default function TestIntegration() {
     );
   };
 
+  const handleCompleteListing = async () => {
+    if (!user) return write("Not signed in");
+    const listingId = prompt("Enter listing ID to complete:");
+    const otherUserId = prompt("Enter swappedWith UID:");
+    await updateListing(listingId, {
+      status: "completed",
+      swappedWith: otherUserId,
+    });
+    write(`Listing ${listingId} marked completed`);
+  };
+
   const handleLeaderboard = async () => {
     const snap = await getTopUsers(5);
     write(
@@ -126,7 +137,7 @@ export default function TestIntegration() {
 
   return (
     <div style={{ padding: 20, fontFamily: "sans-serif" }}>
-      <h1>🔥 Test Integration Page</h1>
+      <h1>Test Integration Page</h1>
       <p>Current user: {user ? user.uid : "none"}</p>
       <button onClick={handleEmailSignIn}>
         Sign in (custom email/password)
@@ -136,9 +147,14 @@ export default function TestIntegration() {
       <button onClick={handleCreateProfile}>createUserProfile()</button>{" "}
       <button onClick={handleGetProfile}>getUserProfile()</button>
       <br />
+      <br />
       <button onClick={handleCreateListing}>createListing()</button>{" "}
       <button onClick={handleGetListings}>getListings()</button>{" "}
+      <button onClick={handleCompleteListing}>
+        completeListing(listingId, otherUserId)
+      </button>{" "}
       <button onClick={handleLeaderboard}>getTopUsers()</button>
+      <br />
       <br />
       <button onClick={handleChat}>getOrCreateChat() + subscribe</button>{" "}
       <button onClick={handleSendMessage}>sendMessage()</button>
@@ -148,7 +164,7 @@ export default function TestIntegration() {
           background: "#f5f5f5",
           padding: 10,
           //   height: 200,
-          overflowY: "scroll",
+          //   overflowY: "scroll",
           whiteSpace: "pre-wrap",
           fontFamily: "monospace",
         }}
