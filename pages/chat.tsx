@@ -241,7 +241,11 @@ export default function Chat() {
                         marginBottom: "0.2rem",
                       }}
                     >
-                      Sarah Johnson
+                      {item == 1
+                        ? "Sarah Johnson"
+                        : item == 2
+                        ? "Cody Fisher"
+                        : "Kathryn Murphy"}
                     </h4>
                     <p
                       style={{

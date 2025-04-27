@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../lib/AuthContext";
+import Link from "next/link";
+import Head from "next/head";
+import { getUserProfile } from "../lib/db";
 
 export default function LeaderBoard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -42,68 +46,48 @@ export default function LeaderBoard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center">
-            <span className="text-2xl font-bold text-green-700">
-              🌱 EcoConnect
-            </span>
-          </div>
-          <nav className="hidden md:flex space-x-6">
-            <a href="/" className="text-green-700 hover:text-emerald-600">
-              Home
-            </a>
-            <a
-              href="/leaderboard"
-              className="font-semibold text-emerald-600 border-b-2 border-emerald-500"
-            >
-              Leaderboard
-            </a>
-            <a
-              href="/activities"
-              className="text-green-700 hover:text-emerald-600"
-            >
-              Activities
-            </a>
-            <a
-              href="/community"
-              className="text-green-700 hover:text-emerald-600"
-            >
-              Community
-            </a>
-          </nav>
-          <button
-            className="md:hidden"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            ☰
-          </button>
-        </div>
-      </header>
+      <Head>
+        <title>Leaderboard - EcoConnect</title>
+        <meta
+          name="description"
+          content="View the top eco-warriors in the EcoConnect community."
+        />
+      </Head>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-white shadow-lg">
-          <div className="px-4 py-2 space-y-3">
-            <a href="/home" className="block py-2 text-green-700">
-              Home
-            </a>
-            <a
+      {/* Navbar */}
+      <nav className="backdrop-blur-md bg-white/80 border-b border-green-100 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <Link
+            href="/"
+            className="text-2xl font-bold text-green-700 flex items-center hover:scale-105 transition-transform"
+          >
+            <span className="mr-2">🌱</span> EcoConnect
+          </Link>
+          <div className="flex items-center gap-6">
+            <Link
+              href="/marketplace"
+              className="text-green-700 hover:text-emerald-600 transition-colors font-medium"
+            >
+              Marketplace
+            </Link>
+            <Link
+              href="/chat"
+              className="text-green-700 hover:text-emerald-600 transition-colors font-medium"
+            >
+              Chat
+            </Link>
+            <Link
               href="/leaderboard"
-              className="block py-2 font-semibold text-emerald-600"
+              className="text-green-700 hover:text-emerald-600 transition-colors font-medium"
             >
               Leaderboard
-            </a>
-            <a href="/activities" className="block py-2 text-green-700">
-              Activities
-            </a>
-            <a href="/community" className="block py-2 text-green-700">
-              Community
-            </a>
+            </Link>
+            <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full font-medium transition-all shadow-md hover:shadow-lg">
+              Add Listing
+            </button>
           </div>
         </div>
-      )}
+      </nav>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">

@@ -7,7 +7,6 @@ import {
   createListing,
   updateListing,
   deleteListing,
-  updateUserPoints,
   createUserProfile,
 } from "../lib/db";
 import { useAuth } from "../lib/AuthContext";
@@ -255,6 +254,12 @@ export default function Marketplace() {
               <span className="mr-2">🌱</span> EcoConnect
             </Link>
             <div className="flex items-center gap-6">
+              <Link
+                href="/marketplace"
+                className="text-green-700 hover:text-emerald-600 transition-colors font-medium"
+              >
+                Marketplace
+              </Link>
               <Link
                 href="/chat"
                 className="text-green-700 hover:text-emerald-600 transition-colors font-medium"

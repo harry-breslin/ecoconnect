@@ -21,7 +21,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>ecoconnect. - Building a Sustainable Future</title>
+        <title>EcoConnect - Building a Sustainable Future</title>
         <meta
           name="description"
           content="Connect with eco-conscious individuals and organizations"
