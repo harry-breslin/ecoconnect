@@ -5,7 +5,27 @@ import Head from "next/head";
 import { getUserProfile } from "../lib/db";
 
 export default function LeaderBoard() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user } = useAuth();
+  const [userPoints, setUserPoints] = useState(150); // Default to 150 points
+
+  useEffect(() => {
+    const fetchUserPoints = async () => {
+      if (!user) return;
+      try {
+        const userProfile = (await getUserProfile(user.uid)) as {
+          id: string;
+          points: number;
+        };
+        setUserPoints(userProfile.points);
+      } catch (error) {
+        console.error("Error fetching user points:", error);
+      }
+    };
+    fetchUserPoints();
+  }, [user]); // Run this effect when the `user` changes
+
+  const userFirstName = user?.displayName?.split(" ")[0] || "Harry";
+  const userInitial = userFirstName.charAt(0).toUpperCase();
 
   // Top 3 players data
   const topPlayers = [
@@ -18,11 +38,11 @@ export default function LeaderBoard() {
       color: "#67AE6E",
     },
     {
-      name: "Harry",
+      name: userFirstName,
       place: "1st",
-      points: "160 Pts",
+      points: `${userPoints} Pts`, // Use the fetched points
       order: 1,
-      avatar: "H",
+      avatar: userInitial,
       color: "#328E6E",
     },
     {
