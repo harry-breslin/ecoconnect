@@ -325,6 +325,8 @@ export default function Marketplace() {
                       return null; // Skip invalid listings
                     }
 
+                    console.log("Listing item:", item);
+
                     return (
                       <div
                         key={item.id}
