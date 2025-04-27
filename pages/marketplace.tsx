@@ -70,46 +70,50 @@ export default function Marketplace() {
     }
   }, [user, loading, router]);
 
-  // Fetch listings from the backend
+  // Fetch listings from the backend (constantly)
   useEffect(() => {
     const fetchListings = async () => {
-      if (!user) {
-        return;
-      }
-      try {
-        console.log("Trying to fetch listings");
-        const fetchedListings = await getListings();
-        console.log("Fetched Listings:", fetchedListings);
-        setListings(fetchedListings || []);
-      } catch (error) {
-        console.error("Error fetching listings:", error);
-        setListings([]);
-      }
+      if (!user) return;
+      const fetchedListings = await getListings();
+      setListings(fetchedListings);
     };
     fetchListings();
   });
 
-  // Add dummy listings to the backend for testing
+  // Add dummy listings to the backend to pad out the marketplace
   useEffect(() => {
     const addDummyListings = async () => {
-      if (!user) {
-        return;
-      }
-      for (let i = 0; i < dummyListings.length; i++) {
-        const dummyOwnerId = `dummyOwner${i}`;
-        await createUserProfile({
-          uid: dummyOwnerId,
-          displayName: `Dummy Owner ${i}`,
-          email: `dummy${i}@example.com`,
-        });
-        await createListing({
-          ...dummyListings[i],
-          ownerId: dummyOwnerId,
-        });
+      if (!user) return;
+
+      try {
+        const MIN_LISTINGS = 15; // Minimum number of listings before adding dummy ones
+        const fetchedListings = await getListings();
+        if (fetchedListings.length >= MIN_LISTINGS) return;
+
+        // If there are fewer than MIN_LISTINGS listings, add dummy listings to pad them out
+        await Promise.all(
+          dummyListings.map(async (listing, i) => {
+            const dummyOwnerId = `dummyOwner${i}`;
+            await createUserProfile({
+              uid: dummyOwnerId,
+              displayName: `Dummy Owner ${i}`,
+              email: `dummy${i}@example.com`,
+            });
+            await createListing({
+              ...listing,
+              ownerId: dummyOwnerId,
+            });
+          })
+        );
+        console.log(
+          `${fetchedListings.length} listings so dummy listings added.`
+        );
+      } catch (error) {
+        console.error("Error adding dummy listings:", error);
       }
     };
     addDummyListings();
-  }, []);
+  }, [user]); // Run this effect whenever the user state changes
 
   // Handle completing a swap
   const handleCompleteSwap = async (listingId, ownerId) => {
@@ -125,9 +129,9 @@ export default function Marketplace() {
         swappedWith: user.uid, // Current user's ID
       });
 
-      // Show toast message and hide after 4 seconds
+      // Show toast message and hide after 5 seconds
       setToastMessage("+10 points!");
-      setTimeout(() => setToastMessage(""), 4000);
+      setTimeout(() => setToastMessage(""), 5000);
 
       // Delete the listing after marking it as completed
       await deleteListing(listingId);
@@ -203,7 +207,7 @@ export default function Marketplace() {
       <div className="min-h-screen bg-gradient-to-b from-green-50 to-emerald-50 relative overflow-hidden">
         {/* Toast notification for swaps */}
         {toastMessage && (
-          <div className="fixed top-4 right-4 bg-emerald-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-transform transform animate-fade-in">
+          <div className="fixed top-4 right-4 bg-emerald-600 text-white px-6 py-3 rounded-lg shadow-lg z-[9999] transition-transform transform animate-fade-in">
             {toastMessage}
           </div>
         )}
@@ -301,75 +305,48 @@ export default function Marketplace() {
           {/* Product Grid */}
           <section className="max-w-7xl mx-auto px-6 py-12">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {!listings
-                ? (() => {
-                    console.warn("No listings found, listings:", listings);
-                    return (
-                      <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center">
-                        <p className="text-green-700 font-semibold">
-                          No listings available at the moment.
-                        </p>
-                      </div>
-                    );
-                  })()
-                : listings.map((item) => {
-                    // Validate the listing object
-                    if (
-                      !item ||
-                      !item.title ||
-                      !item.price ||
-                      !item.image ||
-                      !Array.isArray(item.tags)
-                    ) {
-                      console.warn("Invalid listing:", item);
-                      return null; // Skip invalid listings
-                    }
-
-                    console.log("Listing item:", item);
-
-                    return (
-                      <div
-                        key={item.id}
-                        className="bg-white rounded-xl shadow-lg overflow-hidden border border-green-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
+              {listings.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-white rounded-xl shadow-lg overflow-hidden border border-green-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-2"
+                >
+                  <div className="relative aspect-square overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    />
+                  </div>
+                  <div className="p-6">
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {item.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-medium"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <h3 className="text-xl font-bold text-green-900 mb-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-emerald-600 font-semibold mb-4">
+                      {item.price}
+                    </p>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() =>
+                          handleCompleteSwap(item.id, item.ownerId)
+                        }
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition-colors"
                       >
-                        <div className="relative aspect-square overflow-hidden">
-                          <img
-                            src={item.image}
-                            alt={item.title}
-                            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                          />
-                        </div>
-                        <div className="p-6">
-                          <div className="flex flex-wrap gap-2 mb-3">
-                            {/* {item.tags.map((tag) => (
-                              <span
-                                key={tag}
-                                className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-medium"
-                              >
-                                {tag}
-                              </span>
-                            ))} */}
-                          </div>
-                          <h3 className="text-xl font-bold text-green-900 mb-2">
-                            {item.title}
-                          </h3>
-                          <p className="text-emerald-600 font-semibold mb-4">
-                            {item.price}
-                          </p>
-                          <div className="flex gap-3">
-                            <button
-                              onClick={() =>
-                                handleCompleteSwap(item.id, item.ownerId)
-                              }
-                              className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition-colors"
-                            >
-                              Swap
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                        Swap
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </section>
         </main>
