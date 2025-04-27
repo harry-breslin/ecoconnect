@@ -6,25 +6,25 @@ export default function LeaderBoard() {
   // Top 3 players data
   const topPlayers = [
     {
-      name: "Brook",
-      place: "1st",
-      points: "1500 Pts",
-      order: 0,
-      avatar: "B",
-      color: "#328E6E",
-    },
-    {
       name: "Robert",
       place: "2nd",
-      points: "1200 Pts",
-      order: 1,
+      points: "140 Pts",
+      order: 0,
       avatar: "R",
       color: "#67AE6E",
     },
     {
+      name: "Harry",
+      place: "1st",
+      points: "160 Pts",
+      order: 1,
+      avatar: "H",
+      color: "#328E6E",
+    },
+    {
       name: "Darrell",
       place: "3rd",
-      points: "500 Pts",
+      points: "130 Pts",
       order: 2,
       avatar: "D",
       color: "#90C67C",
@@ -33,11 +33,11 @@ export default function LeaderBoard() {
 
   // Leaderboard table data
   const leaderboardData = [
-    { name: "Cody Fisher", place: 4, points: 300, avatar: "C" },
-    { name: "Kathryn Murphy", place: 5, points: 200, avatar: "K" },
-    { name: "Kristin Watson", place: 6, points: 150, avatar: "K" },
-    { name: "Jerome Bell", place: 7, points: 120, avatar: "J" },
-    { name: "Annette Black", place: 8, points: 100, avatar: "A" },
+    { name: "Cody Fisher", place: 4, points: 120, avatar: "C" },
+    { name: "Kathryn Murphy", place: 5, points: 100, avatar: "K" },
+    { name: "Kristin Watson", place: 6, points: 90, avatar: "K" },
+    { name: "Jerome Bell", place: 7, points: 80, avatar: "J" },
+    { name: "Annette Black", place: 8, points: 60, avatar: "A" },
   ];
 
   return (

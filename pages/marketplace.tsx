@@ -13,7 +13,7 @@ import {
 import { useAuth } from "../lib/AuthContext";
 
 export default function Marketplace() {
-  const { user } = useAuth(); // Access the current user
+  const { user, loading } = useAuth(); // Access the current user and loading state
   const router = useRouter(); // For programmatic navigation
   const [scrollY, setScrollY] = useState(0);
   const [listings, setListings] = useState([]);
@@ -64,10 +64,11 @@ export default function Marketplace() {
 
   // Redirect to login if not logged in
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
+      console.log("User not logged in");
       router.push("/login");
     }
-  }, [user, router]);
+  }, [user, loading, router]);
 
   // Fetch listings from the backend
   useEffect(() => {
@@ -75,8 +76,13 @@ export default function Marketplace() {
       if (!user) {
         return;
       }
-      const fetchedListings = await getListings();
-      setListings(fetchedListings);
+      try {
+        const fetchedListings = await getListings();
+        setListings(fetchedListings || []);
+      } catch (error) {
+        console.error("Error fetching listings:", error);
+        setListings([]);
+      }
     };
     fetchListings();
   }, []);
@@ -91,7 +97,7 @@ export default function Marketplace() {
         const dummyOwnerId = `dummyOwner${i}`;
         await createUserProfile({
           uid: dummyOwnerId,
-          displayName: `Dummy User ${i}`,
+          displayName: `Dummy Owner ${i}`,
           email: `dummy${i}@example.com`,
         });
         await createListing({
@@ -137,6 +143,15 @@ export default function Marketplace() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // If still loading, show a loading spinner or placeholder
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-green-700">Loading...</p>
+      </div>
+    );
+  }
 
   // If the user is not logged in, show nothing (redirect will handle it)
   if (!user) {
