@@ -77,7 +77,9 @@ export default function Marketplace() {
         return;
       }
       try {
+        console.log("Trying to fetch listings");
         const fetchedListings = await getListings();
+        console.log("Fetched Listings:", fetchedListings);
         setListings(fetchedListings || []);
       } catch (error) {
         console.error("Error fetching listings:", error);
@@ -85,7 +87,7 @@ export default function Marketplace() {
       }
     };
     fetchListings();
-  }, []);
+  });
 
   // Add dummy listings to the backend for testing
   useEffect(() => {
