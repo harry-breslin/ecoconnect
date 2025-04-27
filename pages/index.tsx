@@ -90,7 +90,7 @@ export default function Home() {
                     Start Trading
                   </Link>
                   <Link
-                    href="/about"
+                    href="#impact-section"
                     className="border-2 border-green-600 text-green-600 hover:bg-green-50 px-8 py-4 rounded-xl text-lg font-semibold text-center transition-all"
                   >
                     Learn More
@@ -119,7 +119,10 @@ export default function Home() {
           </section>
 
           {/* Stats section inspired by reference */}
-          <section className="py-16 bg-white/50 backdrop-blur-sm">
+          <section
+            id="impact-section"
+            className="py-16 bg-white/50 backdrop-blur-sm"
+          >
             <div className="max-w-7xl mx-auto px-6">
               <h2 className="text-3xl font-bold text-center text-green-800 mb-12">
                 Our <span className="text-emerald-500">Impact</span> in Numbers
@@ -240,7 +243,7 @@ export default function Home() {
                 {["twitter", "instagram", "facebook"].map((platform) => (
                   <Link
                     key={platform}
-                    href={`https://${platform}.com/ecoconnect`}
+                    href={`https://${platform}.com/ecoconnect.macathon`}
                     className="w-10 h-10 rounded-full bg-green-700 hover:bg-green-600 flex items-center justify-center transition-colors"
                     aria-label={`Follow us on ${platform}`}
                   >

@@ -154,7 +154,7 @@ export default function Marketplace() {
   }
 
   // If the user is not logged in, show nothing (redirect will handle it)
-  if (!user) {
+  if (!user && !loading) {
     return null;
   }
 

@@ -51,7 +51,7 @@ export default function LeaderBoard() {
             </span>
           </div>
           <nav className="hidden md:flex space-x-6">
-            <a href="/home" className="text-green-700 hover:text-emerald-600">
+            <a href="/" className="text-green-700 hover:text-emerald-600">
               Home
             </a>
             <a
