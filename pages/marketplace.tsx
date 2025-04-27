@@ -341,14 +341,14 @@ export default function Marketplace() {
                         </div>
                         <div className="p-6">
                           <div className="flex flex-wrap gap-2 mb-3">
-                            {item.tags.map((tag) => (
+                            {/* {item.tags.map((tag) => (
                               <span
                                 key={tag}
                                 className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-medium"
                               >
                                 {tag}
                               </span>
-                            ))}
+                            ))} */}
                           </div>
                           <h3 className="text-xl font-bold text-green-900 mb-2">
                             {item.title}
